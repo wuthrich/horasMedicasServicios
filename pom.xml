@@ -49,8 +49,13 @@
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
-
-    <dependency>
+    
+<dependency>
+  <groupId>com.google.cloud</groupId>
+  <artifactId>google-cloud-firestore</artifactId>
+  <version>0.62.0-beta</version>
+</dependency>
+<dependency>
 <groupId>com.google.appengine</groupId>
 <artifactId>appengine-api-1.0-sdk</artifactId>
 <version>1.9.65</version>
