@@ -10,44 +10,39 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Servlet implementation class Persona
+ * Servlet implementation class Combos
  */
-@WebServlet(asyncSupported = true, urlPatterns = { "/rest/Persona/*" })
-public class Persona extends HttpServlet {
+//@WebServlet("/rest/combos/*")
+@WebServlet(asyncSupported = true, urlPatterns = { "/rest/combos/*" })
+public class Combos extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+   
+	
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Persona() {
-        super();        
+    public Combos() {
+        super();
+       
+        
+        
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		response.setContentType("application/json");
-		String json;
-
-			 try {				 
-				 json=Util.instancia.MapToJson( ConexionFire.con.getPersonaAsMap(Util.instancia.getIdFromPath(request)) );
-			} catch (Exception e) {				
-				e.printStackTrace();
-				json=Util.instancia.catchProblemToJson(e);
-			}		
-	
-		System.out.println("id: "+Util.instancia.getIdFromPath(request)+" respuesta:"+json);
-		response.getWriter().append(json);
+		
+		response.getWriter().append(Util.instancia.tiposCombos(request));
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");		
-		response.getWriter().append(Util.instancia.personaUpset(request));
+		
 	}
 
 }
