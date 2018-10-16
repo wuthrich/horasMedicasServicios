@@ -1,6 +1,9 @@
 package horas;
 
 import java.io.IOException;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,9 +29,19 @@ public class CalendarioSemanal extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("GET");
+		System.out.println("calendariosemanal GET "+request.getPathInfo());
+		response.setContentType("application/json");
+		String ids[]=Util.instancia.getIdFromPath(request).split("/");
+		JsonObjectBuilder respuesta;
+		try {
+			respuesta=ConexionFire.con.calendariosGet(ids[0], Integer.parseInt(ids[1]) , Integer.parseInt(ids[2]));		
+		} catch (Exception e) {			
+			respuesta = Json.createObjectBuilder();
+			respuesta.add("traedatos", false);
+			respuesta.add("error", e.getMessage());
+		}
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.getWriter().append(respuesta.build().toString());
 	}
 
 	/**
@@ -44,7 +57,7 @@ public class CalendarioSemanal extends HttpServlet {
 	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("PUT");
+		System.out.println("calendariosemanal PUT");
 		response.setContentType("application/json");
 		
 		response.getWriter().append(Util.instancia.calendarioUpset(request));

@@ -18,6 +18,7 @@ import javax.json.JsonString;
 import javax.servlet.http.HttpServletRequest;
 
 import horas.pojo.Calendariosemanal;
+import horas.pojo.Hora;
 
 public class Util {
 	
@@ -171,7 +172,18 @@ public class Util {
 	    return list;
 	}
 	
-	public void llenarListReflect(Field field, Calendariosemanal instancia, String key, JsonObject bodyJson) throws IllegalArgumentException, IllegalAccessException {
+	private List<Hora> toListHoras(JsonArray json){
+		//{"linea":1,"dia":1,"hora":"14:00","ofrecida":true}
+	    List<Hora> list = new ArrayList<Hora>();
+	    if (json != null){
+	       json.forEach(item->{	    	      	   
+	    	   list.add(new Hora((JsonObject) item));
+	       });
+	    }
+	    return list;
+	}
+	
+	public void llenarListReflect(Field field, Object instancia, String key, JsonObject bodyJson) throws IllegalArgumentException, IllegalAccessException {
 		
 		switch (field.getGenericType().toString()) {
 		case "java.util.List<java.lang.String>":			
@@ -179,42 +191,43 @@ public class Util {
 			break;
 			
 		case "java.util.List<horas.pojo.Hora>":			
-			
+			field.set(instancia, this.toListHoras(bodyJson.getJsonArray(key)));
 			break;
 			
 
 		default:
+			System.out.println("Lista sin mapeo: "+field.getGenericType().toString());
 			break;
 		}
 	}
 	
 	
-	public Calendariosemanal fillCalendariosemanal(JsonObject bodyJson) {
-		Calendariosemanal semana = new Calendariosemanal();
+	public Object fillPojo(JsonObject bodyJson, Object pojo) {
+		//Calendariosemanal semana = new Calendariosemanal();
 		bodyJson.keySet().forEach(key->{			   
 			   //docData.put(key, calendario.get(key).toString());	
         	 Field field;
         	 int problema=0;
 			try {
-				System.out.println("key "+ key);
-				field = semana.getClass().getDeclaredField(key);
+				//System.out.println("key "+ key);
+				field = pojo.getClass().getDeclaredField(key);
 				
 				switch (field.getType().getName()) {
 				case "java.lang.String":
-					field.set(semana, bodyJson.getString(key));
+					field.set(pojo, bodyJson.getString(key));
 					break;
 					
 				case "java.lang.Integer":
-					field.set(semana, bodyJson.getInt(key));
+					field.set(pojo, bodyJson.getInt(key));
 					break;
 					
 				case "java.lang.Boolean":
-					field.set(semana, bodyJson.getBoolean(key));
+					field.set(pojo, bodyJson.getBoolean(key));
 					break;
 					
 				case "java.util.List":						
-					System.out.println("Esto es una lista "+key+" del tipo: "+field.getGenericType().toString());
-					this.llenarListReflect(field, semana, key, bodyJson);						
+					//System.out.println("Esto es una lista "+key+" del tipo: "+field.getGenericType().toString());
+					this.llenarListReflect(field, pojo, key, bodyJson);						
 					break;
 
 				default:
@@ -232,7 +245,7 @@ public class Util {
         	 
 	   });	
 		
-		return semana;
+		return pojo;
 	}
 	
 	public String calendarioUpset(HttpServletRequest request) {
@@ -244,9 +257,11 @@ public class Util {
 			
 			JsonReader reader = Json.createReader(new StringReader(body));
 			JsonObject bodyJson = reader.readObject();     
-	        reader.close();  
+	        reader.close();	        
 	        
-	        String tiempo=ConexionFire.con.calendarioUpset(fillCalendariosemanal(bodyJson));
+	        Calendariosemanal semana = new Calendariosemanal(bodyJson);	        
+	        String tiempo=ConexionFire.con.calendarioUpset(semana);	       
+	        System.out.println(semana.toJson().toString());
 	        JsonObjectBuilder constructor = Json.createObjectBuilder();
 	        constructor.add("ok", true);
 	        constructor.add("time", tiempo);

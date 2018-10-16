@@ -1,13 +1,35 @@
 package horas.pojo;
 
-public class Hora {
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-    public Boolean ofrecida;
+import horas.Util;
+
+public class Hora {
+	
+	public Hora(JsonObject json) {
+		Util.instancia.fillPojo(json, this);
+	}
+
+    public Hora() {}
+
+	public Boolean ofrecida;
     public Boolean tomada;
     public Integer dia;
     public String hora;//ej 9:20
     public Integer linea;
     public Persona persona;
+       
+    public JsonObject toJson() {
+    	JsonObjectBuilder constructor = Json.createObjectBuilder();
+    	constructor.add("ofrecida", ofrecida);
+    	if(null!=tomada)constructor.add("tomada", tomada);
+    	constructor.add("dia", dia);
+    	constructor.add("hora", hora);
+    	constructor.add("linea", linea);
+    	return constructor.build();
+    }
     
 	public Boolean getOfrecida() {
 		return ofrecida;

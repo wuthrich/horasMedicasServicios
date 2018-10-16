@@ -1,6 +1,18 @@
 package horas.pojo;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import horas.Util;
+
 public class Persona {
+
+	public Persona(JsonObject json) {
+		Util.instancia.fillPojo(json, this);
+	}
+	
+public Persona() {}
 
 public String id;
 public String tipo;    
@@ -11,6 +23,22 @@ public String especialidad;
 public String region;
 public String comuna;    
 public String centro;
+
+
+public JsonObject toJson() {
+	JsonObjectBuilder constructor = Json.createObjectBuilder();
+	constructor.add("id", id);	
+	constructor.add("tipo", tipo);
+	constructor.add("nombre", nombre);
+	constructor.add("mail", mail);
+	constructor.add("fono", fono);	
+	constructor.add("especialidad", especialidad);
+	constructor.add("region", region);
+	constructor.add("comuna", comuna);
+	constructor.add("centro", centro);
+	
+	return constructor.build();
+}
 
 public String getId() {
 	return id;

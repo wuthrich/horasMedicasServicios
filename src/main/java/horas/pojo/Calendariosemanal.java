@@ -4,9 +4,19 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import horas.Util;
+
 public class Calendariosemanal {
+	
+	public Calendariosemanal(JsonObject json) {
+		Util.instancia.fillPojo(json, this);	
+	}
+	
+public Calendariosemanal() {}
+
 public String  personaId;
 public String personaNombre;
 public Integer anio;
@@ -25,7 +35,8 @@ public String getIDfirebase() {
 	
 	return this.personaId+"-"+this.anio+"-"+this.semana;
 }
-public String toJson() {
+
+public JsonObject toJson() {
 	JsonObjectBuilder constructor = Json.createObjectBuilder();
     constructor.add("personaId", personaId);
     constructor.add("personaNombre", personaNombre);
@@ -34,17 +45,10 @@ public String toJson() {
     constructor.add("semana", semana);
     constructor.add("diaDeLaSemanaQueSeHizo", diaDeLaSemanaQueSeHizo);
    //encabezados
-    JsonArrayBuilder encabezados = Json.createArrayBuilder(); 
-    
+    JsonArrayBuilder encabezados = Json.createArrayBuilder();    
     for(Object item: this.encabezados) {
     	encabezados.add(""+item);
-    }
-    /*
-    this.encabezados.forEach(item->{
-    	
-    	System.out.println(item);
-    });
-    */
+    } 
     constructor.add("encabezados", encabezados);
   
     
@@ -53,9 +57,14 @@ public String toJson() {
     constructor.add("longitudHora", longitudHora);
     constructor.add("numeroCitas", numeroCitas);
     //horas
+    JsonArrayBuilder horas = Json.createArrayBuilder();    
+    for(Hora item: this.horas) {
+    	horas.add(item.toJson());
+    } 
+    constructor.add("horas", horas);
     constructor.add("grabado", grabado);    
     
-	return constructor.build().toString();
+	return constructor.build();
 }
 
 public String getPersonaId() {
