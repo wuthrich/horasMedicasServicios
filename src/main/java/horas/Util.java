@@ -409,7 +409,7 @@ public class Util {
 			json.append("\"traedatos\":true, ");			
 			
 			for (Map.Entry<String, Object> par : map.entrySet()) {			
-				json.append("\""+par.getKey()+"\":"+par.getValue()+",");
+				json.append("\""+par.getKey()+"\":\""+par.getValue().toString()+"\",");
 			}
 			
 			json.deleteCharAt(json.length()-1);

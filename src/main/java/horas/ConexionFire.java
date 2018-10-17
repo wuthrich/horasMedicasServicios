@@ -13,6 +13,7 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.cloud.firestore.Query;
 
 import horas.pojo.Calendariosemanal;
+import horas.pojo.Persona;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +62,52 @@ public class ConexionFire {
 		// [END fs_get_doc_as_map]
 		return (document.exists()) ? document.getData() : null;
 	}
+	
+	public JsonObjectBuilder especialistasConHorariosGet(Integer region, Integer anio, Integer semana) throws Exception {		
+		JsonObjectBuilder constructor = Json.createObjectBuilder();
+
+		// Create a reference to the cities collection
+		CollectionReference horariosSemanales = db.collection("personas");
+		// Create a query against the collection.
+		Query query = horariosSemanales.whereEqualTo("region", region);
+
+		// retrieve query results asynchronously using query.get()
+		ApiFuture<QuerySnapshot> querySnapshot = query.get();
+		
+		Boolean traedatos = querySnapshot.get().getDocuments().size()>0?true:false;
+		constructor.add("traedatos", traedatos);
+		
+		if(traedatos) {
+			
+			JsonArrayBuilder lista = Json.createArrayBuilder();
+			
+			for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+				Persona item = document.toObject(Persona.class);
+				Boolean tieneCalendariosActivos = this.calendariosGetBoolean(item.getId(), anio, semana);
+				if(tieneCalendariosActivos) {lista.add(item.toJson());}
+				
+			}
+
+			constructor.add("personas", lista);
+		}
+		
+		return constructor;
+	}
+	
+	public Boolean calendariosGetBoolean(String personaId, Integer anio, Integer semana) throws Exception {
+		// Create a reference to the cities collection
+		CollectionReference horariosSemanales = db.collection("horarioSemanal");
+		// Create a query against the collection.
+		Query query = horariosSemanales.whereEqualTo("personaId", personaId).whereEqualTo("anio", anio)
+				.whereGreaterThanOrEqualTo("semana", semana);
+
+		// retrieve query results asynchronously using query.get()
+		ApiFuture<QuerySnapshot> querySnapshot = query.get();
+		
+		Boolean traedatos = querySnapshot.get().getDocuments().size()>0?true:false;	
+		
+		return traedatos;
+	}
 
 	public JsonObjectBuilder calendariosGet(String personaId, Integer anio, Integer semana) throws Exception {		
 		JsonObjectBuilder constructor = Json.createObjectBuilder();
@@ -107,9 +154,9 @@ public class ConexionFire {
 
 	public String calendarioUpset(Calendariosemanal calendario) throws Exception {
 
-		ApiFuture<WriteResult> future = db.collection("horarioSemanal").document(calendario.getIDfirebase())
+		ApiFuture<WriteResult> future = db.collection("horarioSemanal").document(calendario.idFirebase())
 				.set(calendario);
-		System.out.println("upset de Calendariosemanal id: " + calendario.getIDfirebase() + " hora:"
+		System.out.println("upset de Calendariosemanal id: " + calendario.idFirebase() + " hora:"
 				+ future.get().getUpdateTime());
 		return future.get().getUpdateTime().toString();
 		// return "";
@@ -122,7 +169,7 @@ public class ConexionFire {
 		persona.keySet().forEach(key -> {
 			// System.out.println("key: "+key+" value: "+persona.get(key).toString());
 			if (!"traedatos".equalsIgnoreCase(key)) {// flag para manejo de datos
-				docData.put(key, persona.get(key).toString());
+				docData.put(key, persona.getString(key));
 			}
 
 		});

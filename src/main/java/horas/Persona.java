@@ -29,10 +29,19 @@ public class Persona extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		response.setContentType("application/json");
-		String json;
+		String json = null;
 
-			 try {				 
-				 json=Util.instancia.MapToJson( ConexionFire.con.getPersonaAsMap(Util.instancia.getIdFromPath(request)) );
+			 try {	
+				 String[] path=Util.instancia.getIdFromPath(request).split("/");
+				 if(path.length>1) {
+					 //Un conjunto de personas
+					 json=ConexionFire.con.especialistasConHorariosGet(Integer.parseInt(path[1]), Integer.parseInt(path[2]), Integer.parseInt(path[3])).build().toString();
+				 }else {
+					 //Se busca solo una persona
+					 json=Util.instancia.MapToJson( ConexionFire.con.getPersonaAsMap(Util.instancia.getIdFromPath(request)) );
+				 }
+				 
+				 
 			} catch (Exception e) {				
 				e.printStackTrace();
 				json=Util.instancia.catchProblemToJson(e);

@@ -31,7 +31,7 @@ public Integer numeroCitas;
 public List<Hora> horas; //:Array<Hora>
 public Boolean grabado;
 
-public String getIDfirebase() {
+public String idFirebase() {
 	
 	return this.personaId+"-"+this.anio+"-"+this.semana;
 }
