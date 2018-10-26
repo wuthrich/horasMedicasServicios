@@ -28,6 +28,7 @@ public class Hora {
     	constructor.add("dia", dia);
     	constructor.add("hora", hora);
     	constructor.add("linea", linea);
+    	if(null!=persona)constructor.add("persona", persona.toJson());
     	return constructor.build();
     }
     

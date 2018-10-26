@@ -1,5 +1,6 @@
 package horas;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import horas.pojo.Calendariosemanal;
 import horas.pojo.Hora;
+import horas.pojo.Persona;
 
 public class Util {
 	
@@ -225,6 +227,20 @@ public class Util {
 					field.set(pojo, bodyJson.getBoolean(key));
 					break;
 					
+				case "horas.pojo.Persona":
+					//System.out.println("Se mapea una persona");
+					Persona persona = new Persona();
+					this.fillPojo(bodyJson.getJsonObject(key), persona);
+					field.set(pojo, persona);
+					break;
+					
+				case "horas.pojo.Hora":
+					System.out.println("Se mapea una Hora"); //No debería ocurrir estas se mapean como lista
+					Hora hora = new Hora();
+					this.fillPojo(bodyJson.getJsonObject(key), hora);
+					field.set(pojo, hora);
+					break;
+					
 				case "java.util.List":						
 					//System.out.println("Esto es una lista "+key+" del tipo: "+field.getGenericType().toString());
 					this.llenarListReflect(field, pojo, key, bodyJson);						
@@ -246,6 +262,17 @@ public class Util {
 	   });	
 		
 		return pojo;
+	}
+	
+	public JsonObject jsonBody(HttpServletRequest request) throws Exception {
+		String body = request.getReader().lines()
+			    .reduce("", (accumulator, actual) -> accumulator + actual);
+		
+		JsonReader reader = Json.createReader(new StringReader(body));
+		JsonObject bodyJson = reader.readObject();     
+        reader.close();	
+        
+        return bodyJson;
 	}
 	
 	public String calendarioUpset(HttpServletRequest request) {

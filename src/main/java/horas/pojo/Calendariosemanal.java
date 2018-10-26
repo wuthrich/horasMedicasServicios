@@ -17,8 +17,9 @@ public class Calendariosemanal {
 	
 public Calendariosemanal() {}
 
-public String  personaId;
-public String personaNombre;
+//public String  personaId;
+//public String personaNombre;
+public Persona especialista;
 public Integer anio;
 public Integer mes;
 public Integer semana;
@@ -33,13 +34,14 @@ public Boolean grabado;
 
 public String idFirebase() {
 	
-	return this.personaId+"-"+this.anio+"-"+this.semana;
+	return this.especialista.id+"-"+this.anio+"-"+this.semana;
 }
 
 public JsonObject toJson() {
 	JsonObjectBuilder constructor = Json.createObjectBuilder();
-    constructor.add("personaId", personaId);
-    constructor.add("personaNombre", personaNombre);
+    //constructor.add("personaId", personaId);
+    //constructor.add("personaNombre", personaNombre);
+	constructor.add("especialista", especialista.toJson());	
     constructor.add("anio", anio);
     constructor.add("mes", mes);
     constructor.add("semana", semana);
@@ -67,18 +69,15 @@ public JsonObject toJson() {
 	return constructor.build();
 }
 
-public String getPersonaId() {
-	return personaId;
+
+public Persona getEspecialista() {
+	return especialista;
 }
-public void setPersonaId(String personaId) {
-	this.personaId = personaId;
+
+public void setEspecialista(Persona especialista) {
+	this.especialista = especialista;
 }
-public String getPersonaNombre() {
-	return personaNombre;
-}
-public void setPersonaNombre(String personaNombre) {
-	this.personaNombre = personaNombre;
-}
+
 public Integer getAnio() {
 	return anio;
 }

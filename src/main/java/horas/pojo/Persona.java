@@ -1,5 +1,7 @@
 package horas.pojo;
 
+import java.util.HashMap;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -38,6 +40,19 @@ public JsonObject toJson() {
 	constructor.add("centro", centro);
 	
 	return constructor.build();
+}
+
+@SuppressWarnings("rawtypes")
+public void fromHashMap(HashMap persona) {
+	this.id = (String) persona.get("id");
+	this.tipo = (String) persona.get("tipo");
+	this.nombre = (String) persona.get("nombre");
+	this.mail = (String) persona.get("mail");
+	this.fono = (String) persona.get("fono");
+	this.especialidad = (String) persona.get("especialidad");
+	this.region = (String) persona.get("region");
+	this.comuna = (String) persona.get("comuna");
+	this.centro = (String) persona.get("centro");
 }
 
 public String getId() {

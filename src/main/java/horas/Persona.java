@@ -34,8 +34,24 @@ public class Persona extends HttpServlet {
 			 try {	
 				 String[] path=Util.instancia.getIdFromPath(request).split("/");
 				 if(path.length>1) {
-					 //Un conjunto de personas
-					 json=ConexionFire.con.especialistasConHorariosGet(Integer.parseInt(path[1]), Integer.parseInt(path[2]), Integer.parseInt(path[3])).build().toString();
+					 
+					 switch (path[0]) {
+					case "especialistas":
+						//Un conjunto de personas
+						json=ConexionFire.con.especialistasConHorariosGet(path[1], Integer.parseInt(path[2]) , Integer.parseInt(path[3])).build().toString();
+						break;
+						
+					case "horastomadas":
+						//Un conjunto de personas
+						json=ConexionFire.con.personaHorasTomadas(path[1]).build().toString();
+						break;
+
+					default:
+						throw new Exception("No existe este servicio: "+path[0]);
+					}
+					 
+					 
+					 
 				 }else {
 					 //Se busca solo una persona
 					 json=Util.instancia.MapToJson( ConexionFire.con.getPersonaAsMap(Util.instancia.getIdFromPath(request)) );
