@@ -61,6 +61,7 @@ public class CalendarioSemanal extends HttpServlet {
 		String respuesta = null;
 
 		String servicio = Util.instancia.getIdFromPath(request);
+		if(null==servicio) servicio="";
 		
 		try {
 			JsonObject body = Util.instancia.jsonBody(request);
